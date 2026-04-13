@@ -48,7 +48,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
         //缓存击穿逻辑
        // Shop shop = queryWithLogicalExpire(id);
-        Shop shop = cacheClient.queryWithLogicalExpire("cache:shop", id, Shop.class,this::getById ,30L, TimeUnit.MINUTES);
+        Shop shop = cacheClient.queryWithLogicalExpire("cache:shop:", id, Shop.class,this::getById ,30L, TimeUnit.MINUTES);
 
         return Result.ok(shop);
     }

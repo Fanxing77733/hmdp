@@ -22,15 +22,15 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 登录拦截器
         registry.addInterceptor(loginInterceptor)
-                .excludePathPatterns(
+               .excludePathPatterns(
                         "/user/code",
                         "/user/login"
                 ).order(1);
         // 刷新token
         registry.addInterceptor(refreshTokenInterceptor)
                 .addPathPatterns("/**")
-                .order(0);
+               .order(0);
+   }
+
     }
 
-
-}

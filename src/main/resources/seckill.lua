@@ -6,9 +6,11 @@
 
 local voucherId = ARGV[1]
 local userId = ARGV[2]
+local orderId = ARGV[3]
 
 local stockKey = 'seckill:stock:' .. voucherId
 local orderKey = 'seckill:order:' .. voucherId
+local streamName = 'stream.orders'
 
 if (redis.call('exists', stockKey) == 0) then
     return 1
@@ -24,5 +26,7 @@ end
 
 redis.call('incrby', stockKey, -1)
 redis.call('sadd', orderKey, userId)
+
+redis.call('xadd', streamName, '*', 'userId', userId, 'voucherId', voucherId, 'orderId', orderId)
 
 return 0

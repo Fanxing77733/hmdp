@@ -12,6 +12,7 @@ import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.IUserService;
 import com.hmdp.utils.RegexUtils;
 import com.hmdp.utils.SystemConstants;
+import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -101,6 +102,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.ok(token);
 
     }
+
+    @Override
+    public Result logout() {
+        String token = null;
+        try {
+            javax.servlet.http.HttpServletRequest request =
+                    ((org.springframework.web.context.request.ServletRequestAttributes)
+                            org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes())
+                            .getRequest();
+            token = request.getHeader("authorization");
+        } catch (Exception e) {
+            return Result.fail("获取token失败");
+        }
+
+        if (token == null || token.isEmpty()) {
+            return Result.fail("未登录");
+        }
+
+        String key = "login_token:" + token;
+        stringRedisTemplate.delete(key);
+
+        UserHolder.removeUser();
+
+        return Result.ok();
+    }
+
     private User createUserWithPhone(String phone) {
         User user = new User();
         user.setPhone(phone);
